@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import bookstore.training.domain.Book;
 import bookstore.training.domain.BookRepository;
 import bookstore.training.domain.CategoryRepository;
+import bookstore.training.domain.UserDetailServiceImpl;
 
 @Controller
 public class BookController {
@@ -27,7 +30,8 @@ public class BookController {
 
 	@Autowired
 	private CategoryRepository crepository;
-
+	
+	
 	@GetMapping("/booklist")
 	public String bookList(Model model) {
 		model.addAttribute("books", repository.findAll());
@@ -66,7 +70,7 @@ public class BookController {
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String deleteBook(@PathVariable("id") Long bookId, Model model) {
 		repository.deleteById(bookId);
 
